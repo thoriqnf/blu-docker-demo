@@ -3,18 +3,63 @@
   # Level 3: Add dedicated networks and volumes
   # Level 4: Add healthchecks and resource limits
   # Level 5: Add secrets and .env validation
-
+services:
   db:
     image: postgres:16-alpine
     # TODO: Environment (Level 1)
-    # TODO: Volumes (Level 3)
+    environment:
+      POSTGRES_DB: notesdb
+      POSTGRES_USER: notesuser
+      POSTGRES_PASSWORD: notespass123
+    # TODO: Volumes (Level 3)s
     # TODO: Healthcheck (Level 4)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notesuser -d notesdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my-appnote-network
 
   redis:
     image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - my-appnote-network
     # TODO: Healthcheck (Level 4)
 
   app:
+    build: ./notes-app
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      DB_HOST: ${DB_HOST} # Uses the service name as the hostname
+      DB_PORT: 5432
+      DB_NAME: notesdb
+      DB_USERNAME: notesuser
+      DB_PASSWORD: notespass123
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+    networks:
+      - my-appnote-network
+    env_file:
+      - .env
+
+networks:
+  my-appnote-network:
+    driver: bridge
+# volumes: 
+#   notes-app-volume
     # TODO: Build & Ports (Level 1)
     # TODO: Multi-stage build (Level 2)
     # TODO: Networks (Level 3)

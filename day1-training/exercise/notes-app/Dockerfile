@@ -6,13 +6,13 @@ FROM maven:3.9-eclipse-temurin-21-alpine AS builder
 WORKDIR /build
 
 # Copy dependency descriptor first (for better layer caching)
-COPY notes-app/pom.xml .
+COPY pom.xml .
 
 # Download dependencies (cached unless pom.xml changes)
 RUN mvn dependency:go-offline -B
 
 # Copy source code
-COPY notes-app/src ./src
+COPY src ./src
 
 # Build the application (skip tests for faster builds)
 RUN mvn clean package -DskipTests -B
