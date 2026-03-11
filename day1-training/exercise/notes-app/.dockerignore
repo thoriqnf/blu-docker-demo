@@ -1,0 +1,10 @@
+src/main/java/com/devops-demo/**
+**/devops-demo/**
+target/
+build/
+.mvn/
+*.iml
+.idea/
+.DS_Store
+.m2/
+pgdata/

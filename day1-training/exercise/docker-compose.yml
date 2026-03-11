@@ -1,22 +1,58 @@
-# services:
-  # Level 1: Basic Services (db, redis, app)
-  # Level 3: Add dedicated networks and volumes
-  # Level 4: Add healthchecks and resource limits
-  # Level 5: Add secrets and .env validation
+version: '3.8'
 
+services:
   db:
     image: postgres:16-alpine
-    # TODO: Environment (Level 1)
-    # TODO: Volumes (Level 3)
-    # TODO: Healthcheck (Level 4)
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./db_password.txt:/run/secrets/db_password:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notesuser -d notesdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
-    # TODO: Healthcheck (Level 4)
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
-    # TODO: Build & Ports (Level 1)
-    # TODO: Multi-stage build (Level 2)
-    # TODO: Networks (Level 3)
-    # TODO: Depends_on & Limits (Level 4)
-    # TODO: Secrets (Level 5)
+    build: ./notes-app
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD_FILE: /run/secrets/db_password
+    depends_on:
+      - db
+      - redis
+
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+
+    env_file:
+      - .env
+
+    secrets:
+      - db_password
+    volumes:
+      # Mount secret file into container for non-swarm compose
+      - ./db_password.txt:/run/secrets/db_password:ro
+
+secrets:
+  db_password:
+    file: ./db_password.txt
