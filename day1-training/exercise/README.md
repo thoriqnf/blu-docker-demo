@@ -11,34 +11,34 @@ This final challenge brings together everything you've learned from Demos 01 to 
 
 ### Level 1: The Basics (Demos 01-03)
 **Goal**: Get the app and its dependencies running.
-- [ ] Create a `Dockerfile` for `notes-app.jar`.
-- [ ] Use `eclipse-temurin:21-jre-alpine` as base image.
-- [ ] In `docker-compose.yml`, define 3 services: `app`, `db` (Postgres), and `redis`.
-- [ ] Map port `8081` for the app.
+- [x] Create a `Dockerfile` for `notes-app.jar`.
+- [x] Use `eclipse-temurin:21-jre-alpine` as base image.
+- [x] In `docker-compose.yml`, define 3 services: `app`, `db` (Postgres), and `redis`.
+- [x] Map port `8081` for the app.
 
 ### Level 2: Build Optimization (Demos 04-05)
 **Goal**: Professional-grade images.
-- [ ] Implement **Multi-Stage Build** in your Dockerfile (Build stage -> Run stage).
-- [ ] Use a `.dockerignore` to exclude `node_modules`, `.git`, and target folders.
-- [ ] Ensure **Layer Caching** is efficient (copy dependencies before source code).
+- [x] Implement **Multi-Stage Build** in your Dockerfile (Build stage -> Run stage).
+- [x] Use a `.dockerignore` to exclude `node_modules`, `.git`, and target folders.
+- [x] Ensure **Layer Caching** is efficient (copy dependencies before source code).
 
 ### Level 3: Networking & Persistence (Demos 06-07)
 **Goal**: Safe data and isolated communication.
-- [ ] Create a custom **Docker Network** and put all 3 services in it.
-- [ ] Add a **Named Volume** for PostgreSQL so data survives a `docker compose down`.
-- [ ] Use **Service Discovery**: Configure `DB_HOST=db` and `REDIS_HOST=redis` (no IP addresses!).
+- [x] Create a custom **Docker Network** and put all 3 services in it.
+- [x] Add a **Named Volume** for PostgreSQL so data survives a `docker compose down`.
+- [x] Use **Service Discovery**: Configure `DB_HOST=db` and `REDIS_HOST=redis` (no IP addresses!).
 
 ### Level 4: Reliability & Performance (Demos 08-09)
 **Goal**: Production stability.
-- [ ] Add **Healthchecks** for `db` (using `pg_isready`) and `redis` (using `redis-cli ping`).
-- [ ] Make the `app` wait for them using `depends_on` with `condition: service_healthy`.
-- [ ] Add **Resource Limits**: Limit the app to `512MB` RAM and `0.5` CPU.
+- [x] Add **Healthchecks** for `db` (using `pg_isready`) and `redis` (using `redis-cli ping`).
+- [x] Make the `app` wait for them using `depends_on` with `condition: service_healthy`.
+- [x] Add **Resource Limits**: Limit the app to `512MB` RAM and `0.5` CPU.
 
 ### Level 5: Security & Compliance (Demos 10-12)
 **Goal**: Enterprise-grade security.
-- [ ] Use a `.env` file for non-sensitive config (like `APP_NAME`).
-- [ ] Implement **Docker Secrets** for the `DB_PASSWORD`.
-- [ ] Run `docker compose config` to verify your YAML is perfect.
+- [x] Use a `.env` file for non-sensitive config (like `APP_NAME`).
+- [x] Implement **Docker Secrets** for the `DB_PASSWORD`.
+- [x] Run `docker compose config` to verify your YAML is perfect.
 
 ---
 

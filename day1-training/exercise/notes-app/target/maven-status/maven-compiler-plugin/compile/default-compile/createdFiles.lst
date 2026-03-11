@@ -1,0 +1,5 @@
+com/devops/notes/NotesApplication.class
+com/devops/notes/controller/NoteController.class
+com/devops/notes/model/Note.class
+com/devops/notes/repository/NoteRepository.class
+com/devops/notes/service/NoteService.class
