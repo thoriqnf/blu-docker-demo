@@ -1,0 +1,16 @@
+{
+  "name": "day1-training-slides",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --port 3030",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.14.1",
+    "@slidev/theme-default": "latest",
+    "@slidev/theme-seriph": "latest",
+    "inter-ui": "^4.1.1",
+    "slidev-theme-neversink": "^0.4.1"
+  }
+}

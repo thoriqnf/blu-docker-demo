@@ -1,0 +1,10 @@
+services:
+  app:
+    image: alpine
+    command: tail -f /dev/null
+    environment:
+      # This is defined in the YAML itself
+      - APP_COLOR=${APP_COLOR:-gray} 
+      - DB_USER=${DB_USER}
+    env_file:
+      - .env
