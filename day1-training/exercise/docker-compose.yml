@@ -11,9 +11,9 @@ services:
     restart: always
     # TODO: Environment (Level 1)
     environment:     
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: notedb
+      POSTGRES_USER: noteuser
+      POSTGRES_PASSWORD: SuperSecretDatabasePassword123!
     # TODO: Volumes (Level 3)
     # volumes:
     #   - postgres_data:/var/lib/postgresql
@@ -40,9 +40,9 @@ services:
       
     # TODO: Multi-stage build (Level 2)
     environment:
-      DB_USERNAME: postgres
-      DB_PASSWORD: password
-      DB_NAME: postgres
+      DB_USERNAME: noteuser
+      DB_PASSWORD: SuperSecretDatabasePassword123
+      DB_NAME: notedb
     depends_on:
       db:
         condition: service_healthy
