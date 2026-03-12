@@ -1,0 +1,12 @@
+services:
+  db:
+    image: alpine
+    command: tail -f /dev/null
+    environment:
+      - DB_USER=admin # This is VISIBLE (low security)
+    secrets:
+      - db_password # This is HIDDEN (high security)
+
+secrets:
+  db_password:
+    file: ./db_password.txt
