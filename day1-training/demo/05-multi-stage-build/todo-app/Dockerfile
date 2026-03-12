@@ -1,55 +1,38 @@
-# ===========================================
-# Multi-stage Dockerfile for Todo API
-# ===========================================
-# Stage 1: Build the application with Maven
-# Stage 2: Run with a lightweight JRE image
-# ===========================================
+# Multi stage dockerfile for todo API JAVA
+# Stage 1: build the app with maven
+# Stage 2: run with JRE image already slim
 
-# ---------- Stage 1: Build ----------
 FROM maven:3.9-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /build
 
-# Copy dependency descriptor first (for better layer caching)
 COPY pom.xml .
 
-# Download dependencies (cached unless pom.xml changes)
 RUN mvn dependency:go-offline -B
 
-# Copy source code
 COPY src ./src
 
-# Build the application (skip tests for faster builds)
-RUN mvn clean package -DskipTests -B
+RUN mvn clean package -D skipTests -B
 
-# ---------- Stage 2: Runtime ----------
+# Stage 2
+
 FROM eclipse-temurin:21-jre-alpine
 
-# Add labels for better container management
-LABEL maintainer="devops-training"
-LABEL description="Todo API - Spring Boot Application"
-LABEL version="1.0.0"
-
-# Create a non-root user for security
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-# Copy the built JAR from the builder stage
+# copy the built jat from the builder stage
+
 COPY --from=builder /build/target/todo-app.jar app.jar
 
-# Change ownership to non-root user
+# non root user ownership
 RUN chown -R appuser:appgroup /app
 
-# Switch to non-root user
 USER appuser
 
-# Expose the application port
-EXPOSE 8080
+EXPOSE 7070
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+HEALTHCHECK --interval=30s --timeout=30s --start-period=40s --retries=3 CMD [ "executable" ]
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT [ "java", "-jar", "app.jar" ]
