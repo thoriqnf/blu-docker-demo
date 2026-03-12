@@ -3,20 +3,78 @@
   # Level 3: Add dedicated networks and volumes
   # Level 4: Add healthchecks and resource limits
   # Level 5: Add secrets and .env validation
+services:
 
   db:
     image: postgres:16-alpine
+    container_name: db_notes_app_exercise
     # TODO: Environment (Level 1)
+    environment:
+      POSTGRES_DB: notesdb
+      POSTGRES_USER: notesuser
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
     # TODO: Volumes (Level 3)
+    volumes:
+      - notesdb:/var/lib/postgresql/data
+    networks:
+      - notes-app-network
     # TODO: Healthcheck (Level 4)
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "notesuser"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
     image: redis:7-alpine
+    networks:
+      - notes-app-network
     # TODO: Healthcheck (Level 4)
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  app:
+  api:
     # TODO: Build & Ports (Level 1)
+    build: ./notes-app
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configtree:/run/secrets/
     # TODO: Multi-stage build (Level 2)
+    image: notes-app-image
     # TODO: Networks (Level 3)
+    networks:
+      - notes-app-network
     # TODO: Depends_on & Limits (Level 4)
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
     # TODO: Secrets (Level 5)
+    secrets:
+      - source: db_password
+        target: /run/secrets/DB_PASSWORD
+
+networks:
+  notes-app-network:
+    driver: bridge
+
+volumes:
+  notesdb:
+
+secrets:
+  db_password:
+    file: ./db_password.txt
