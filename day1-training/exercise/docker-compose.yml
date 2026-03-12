@@ -6,10 +6,11 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+ 
     volumes:
       - ./pgdata:/var/lib/postgresql/data
       - ./db_password.txt:/run/secrets/db_password:ro
+    command: sh -c "if [ -f /run/secrets/db_password ]; then export POSTGRES_PASSWORD=$(cat /run/secrets/db_password); fi; exec docker-entrypoint.sh postgres"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U notesuser -d notesdb"]
       interval: 5s
@@ -33,7 +34,8 @@ services:
       DB_PORT: ${DB_PORT}
       DB_NAME: ${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD_FILE: /run/secrets/db_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - db
       - redis
@@ -52,7 +54,6 @@ services:
     volumes:
       # Mount secret file into container for non-swarm compose
       - ./db_password.txt:/run/secrets/db_password:ro
-
 secrets:
   db_password:
     file: ./db_password.txt

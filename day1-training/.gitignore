@@ -1,0 +1,47 @@
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+.project
+.classpath
+.settings/
+
+# Java / Maven
+target/
+target/**
+/*.jar
+/*.war
+/*.ear
+/.mvn/
+
+# Spring Boot
+application.properties
+application.yml
+
+# Logs
+logs/
+*.log
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+pgdata/
+docker-compose.override.yml
+
+# Environment and secrets
+.env
+db_password.txt
+db_password
+*.pem
+*.key
+secrets/
+
+# Misc
+coverage/
+*.orig

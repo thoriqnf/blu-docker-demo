@@ -49,9 +49,9 @@ USER appuser
 # Expose the application port
 EXPOSE 8080
 
-# Health check
+# Health check (use BusyBox wget-compatible flags)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+    CMD wget -q --spider http://localhost:8081/actuator/health || exit 1
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application; read DB password from Docker secret if present
+ENTRYPOINT ["sh", "-lc", "if [ -f /run/secrets/db_password ]; then export DB_PASSWORD=$(cat /run/secrets/db_password); fi; exec /opt/java/openjdk/bin/java -jar app.jar"]
